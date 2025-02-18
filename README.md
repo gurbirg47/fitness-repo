@@ -9,3 +9,5 @@ Core Features of the Fitness Tracker:
   - Goal Setting: Allows users to set fitness goals (ie., lose weight, gain muscle, or run 10k)
   - Exercise Recommendations: Suggests workouts based on the user's fitness level
   - Achievements and badges: Rewards users with rewards for consistency
+
+Please Look the file fitness_tracker.py to see code for this project
