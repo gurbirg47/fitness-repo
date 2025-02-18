@@ -34,7 +34,7 @@ def user_profile():
         print('\n')
         profile['Age'] = int(input('Enter your age: '))
         profile['Weight'] = float(input('Enter your weight (lb): '))
-        profile['Height'] = input('Enter your height (ft): ')
+        profile['Height'] = float(input('Enter your height (ft): '))
         profile['Goals'] = input('What are your fitness goals? ')
 
         # profile summary
@@ -53,12 +53,74 @@ def user_profile():
             elif field_to_edit == 'Weight':
                 profile['Weight'] = float(input('Enter your new weight (ft): '))
             elif field_to_edit == 'Height':
-                profile['Height'] = input('Enter new Height: ')
+                profile['Height'] = float(input('Enter new Height (ft): '))
             elif field_to_edit == 'Goals':
                 profile['Goals'] = input('Enter new Goals: ')
         else:
             print('Thank you! Your profile is complete.')
             break
 
-#functions call
-user_profile()
+user_data = user_profile()
+
+#main interface for the program
+
+def main():
+
+    activities = []  # empty list to store activties
+    print('Welcome To the Fitness Tracker')
+
+    while True:
+        print('\n---Menu---')
+        print('1. Log an Activity')
+        print('2. View Summary')
+        print('3. Calculate BMI')
+        print('4. Quit')
+
+        user_choice = int(input('Enter your choice (1,2,3,4): '))
+
+        if user_choice == 1:     #user wants to log an activity
+            excercise = input('Enter the type of Excercise: ').strip()
+            category = input('Enter the category (Cardio, Strength, Flexibility, etc.): ')
+            time_spent = int(input('Enter the time spent(in minutes): '))
+            calories = int(input('Enter the calories burned: '))
+            activities.append((excercise, category, time_spent, calories))    #adding the activties to the list
+        
+        elif user_choice == 2:
+            print('\n---Daily Summary---')
+            if activities:
+                for activity in activities:
+                    print(f'Exercise: {activity[0]}, Category: {activity[1]}, Time spent: {activity[2]} mins, Calories: {activity[3]} calories')
+            
+                #display the totals
+
+
+def total_cal(activities):
+    total_calories = 0
+    
+    for activity in activities:
+        total_calories += activity[3]
+
+    return total_calories
+
+
+def calculate_bmi():
+    height_m = user_data['Height'] / 3.281
+    weight_kg = user_data['Weight'] * 0.453592    #convert lbs to kg
+    bmi = weight_kg / (height_m**2)
+    return bmi
+
+def highest_cal_activity(activities):
+    if not activities:
+        return None
+    else:
+        return max(activities, key=lambda x: x[3])  #this finds the tuple with the max calories burned
+
+def calc_total_time(activities):
+    total_time = 0 
+
+    for activity in activities:
+        total_time += activity[2]
+    
+    return total_time
+
+
