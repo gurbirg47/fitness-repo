@@ -1,126 +1,153 @@
-### Fitness tracker
-
-# User Profile to store (age, weight, height and fitness goals)
+# Global list to store activities
+activities = []
 
 def greet(username):
-    print(f'Hi {username.title()} Welcome to the Fitness tracker')
+    print(f'Hi {username.title()}, Welcome to the Fitness Tracker!')
 
 username = input('Enter your Name: ')
-
 greet(username)
 
-
+# Get details from user for fitness profile
 def user_profile():
-    
     print(
-        f'{username.title()}, can you please enter your age,'
-        'weight, fitness goals to help us personalize your experience'
-        'and provide the best recommendations for your journey'
+        f'{username.title()}, please enter your age, weight, and fitness goals '
+        'so we can personalize your experience and provide recommendations.'
     )
-      
+
     profile = {
-         'Age' : None,
-         'Weight': None,
-         'Height': None,
-         'Goals' : None
+        'Age': None,
+        'Weight': None,
+        'Height': None,
+        'Goals': None
     }
 
-    # Collecting user details
     while True:
-        print(
-            f'\n{username.title()}, can you please enter your age,'
-            'weight, height, and fitness goals?'
-        )
-        print('\n')
-        profile['Age'] = int(input('Enter your age: '))
-        profile['Weight'] = float(input('Enter your weight (lb): '))
-        profile['Height'] = float(input('Enter your height (ft): '))
-        profile['Goals'] = input('What are your fitness goals? ')
+        print(f'\n{username.title()}, please enter your details:')
+        try:
+            profile['Age'] = int(input('Enter your age: '))
+            profile['Weight'] = float(input('Enter your weight (lb): '))
+            profile['Height'] = float(input('Enter your height (ft): '))
+            profile['Goals'] = input('What are your fitness goals? ').strip()
 
-        # profile summary
-        print('\nSummary of your Profile')
-        print(f'Age: {profile['Age']} years')
-        print(f'Weight: {profile['Weight']}')
-        print(f'Height: {profile['Height']} ft')
-        print(f'Goals: {profile['Goals']}')
+            # Display Profile Summary
+            print('\n--- Summary of Your Profile ---')
+            print(f'Age: {profile["Age"]} years')
+            print(f'Weight: {profile["Weight"]} lbs')
+            print(f'Height: {profile["Height"]} ft')
+            print(f'Goals: {profile["Goals"]}')
 
-        # if the user wants to make changes to their profile
-        edit = input('\nWould you like to make changes to your profile (yes/no): ').strip().lower()
-        if edit == 'yes':
-            field_to_edit = input('Which field would you like to edit (Age/Weight/Height/Goals)').strip().title()
-            if field_to_edit == 'Age':
-                profile['Age'] = int(input('Enter your new Age: '))
-            elif field_to_edit == 'Weight':
-                profile['Weight'] = float(input('Enter your new weight (ft): '))
-            elif field_to_edit == 'Height':
-                profile['Height'] = float(input('Enter new Height (ft): '))
-            elif field_to_edit == 'Goals':
-                profile['Goals'] = input('Enter new Goals: ')
-        else:
-            print('Thank you! Your profile is complete.')
-            break
+            # Ask user if they want to edit profile
+            edit = input('\nWould you like to make changes to your profile? (yes/no): ').strip().lower()
+            if edit == 'yes':
+                field_to_edit = input('Which field would you like to edit? (Age/Weight/Height/Goals) ').strip().title()
+                if field_to_edit in profile:
+                    new_value = input(f"Enter new value for {field_to_edit}: ")
+                    profile[field_to_edit] = float(new_value) if field_to_edit in ['Weight', 'Height'] else new_value
+                else:
+                    print("Invalid choice. No changes made.")
+            else:
+                print('Thank you! Your profile is complete.')
+                break
+        except ValueError:
+            print("Invalid input. Please enter numeric values for Age, Weight, and Height.")
 
+    return profile
+
+# Store user profile data
 user_data = user_profile()
 
-#main interface for the program
-
+# Main Function for the Program
 def main():
-
-    activities = []  # empty list to store activties
-    print('Welcome To the Fitness Tracker')
+    print('\nWelcome To the Fitness Tracker')
 
     while True:
         print('\n---Menu---')
         print('1. Log an Activity')
         print('2. View Summary')
         print('3. Calculate BMI')
-        print('4. Quit')
+        print('4. View User Profile')
+        print('5. Quit')
 
-        user_choice = int(input('Enter your choice (1,2,3,4): '))
+        user_choice = input('Enter your choice (1,2,3,4,5): ').strip()
 
-        if user_choice == 1:     #user wants to log an activity
-            excercise = input('Enter the type of Excercise: ').strip()
-            category = input('Enter the category (Cardio, Strength, Flexibility, etc.): ')
-            time_spent = int(input('Enter the time spent(in minutes): '))
-            calories = int(input('Enter the calories burned: '))
-            activities.append((excercise, category, time_spent, calories))    #adding the activties to the list
-        
+        # Validate user input
+        if not user_choice.isdigit() or int(user_choice) not in range(1, 6):
+            print("Invalid choice. Please enter a number between 1 and 5.")
+            continue  # Restart loop
+
+        user_choice = int(user_choice)  # Convert input to integer
+
+        # Log an Activity
+        if user_choice == 1:
+            global activities  # Ensure we modify the global list
+            exercise = input('Enter the type of exercise: ').strip()
+            category = input('Enter the category (Cardio, Strength, Flexibility, etc.): ').strip()
+            try:
+                time_spent = int(input('Enter the time spent (in minutes): '))
+                calories = int(input('Enter the calories burned: '))
+                activities.append((exercise, category, time_spent, calories))
+                print("Activity logged successfully!")
+            except ValueError:
+                print("Error: Please enter a valid number for time and calories.")
+
+        # View Summary
         elif user_choice == 2:
             print('\n---Daily Summary---')
+
             if activities:
                 for activity in activities:
-                    print(f'Exercise: {activity[0]}, Category: {activity[1]}, Time spent: {activity[2]} mins, Calories: {activity[3]} calories')
-            
-                #display the totals
+                    print(f'Exercise: {activity[0]}, Category: {activity[1]}, Time: {activity[2]} mins, Calories: {activity[3]}')
 
+                # Display Totals
+                total_calories = total_cal(activities)
+                total_time = calc_total_time(activities)
+                print(f'Total Calories Burned: {total_calories}')
+                print(f'Total Time Spent Exercising: {total_time} mins')
 
+                # Display highest calorie-burning activity
+                top_activity = highest_cal_activity(activities)
+                if top_activity:
+                    print(f'Highest Calorie-Burning Activity: {top_activity[0]} ({top_activity[3]} calories)')
+            else:
+                print("No activities logged yet. Log an activity first!")
+
+        # Calculate BMI
+        elif user_choice == 3:
+            bmi = calculate_bmi(user_data)
+            print(f'Your BMI is: {bmi:.2f}')
+
+        # View User Profile
+        elif user_choice == 4:
+            print('\n---User Profile---')
+            print(f'Name: {username.title()}')
+            print(f'Age: {user_data["Age"]} years')  
+            print(f'Weight: {user_data["Weight"]} lbs')  
+            print(f'Height: {user_data["Height"]} ft')  
+            print(f'Goals: {user_data["Goals"]}')  
+
+        # Quit
+        elif user_choice == 5:
+            print('Thank you for using the Fitness Tracker! Exiting...')
+            break  # Exit loop
+
+# Function to calculate total calories burned
 def total_cal(activities):
-    total_calories = 0
-    
-    for activity in activities:
-        total_calories += activity[3]
+    return sum(activity[3] for activity in activities)
 
-    return total_calories
+# Function to calculate BMI
+def calculate_bmi(user_data):
+    height_m = user_data["Height"] / 3.281  # Convert feet to meters
+    weight_kg = user_data["Weight"] * 0.453592  # Convert lbs to kg
+    return weight_kg / (height_m ** 2)  # BMI formula
 
-
-def calculate_bmi():
-    height_m = user_data['Height'] / 3.281
-    weight_kg = user_data['Weight'] * 0.453592    #convert lbs to kg
-    bmi = weight_kg / (height_m**2)
-    return bmi
-
+# Function to find the highest calorie-burning activity
 def highest_cal_activity(activities):
-    if not activities:
-        return None
-    else:
-        return max(activities, key=lambda x: x[3])  #this finds the tuple with the max calories burned
+    return max(activities, key=lambda x: x[3]) if activities else None
 
+# Function for total excercise time
 def calc_total_time(activities):
-    total_time = 0 
+    return sum(activity[2] for activity in activities)
 
-    for activity in activities:
-        total_time += activity[2]
-    
-    return total_time
-
-
+#run program
+if __name__ == '__main__':
+    main()
