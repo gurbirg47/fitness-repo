@@ -73,9 +73,9 @@ def main():
         # Validate user input
         if not user_choice.isdigit() or int(user_choice) not in range(1, 6):
             print("Invalid choice. Please enter a number between 1 and 5.")
-            continue  # Restart loop
+            continue
 
-        user_choice = int(user_choice)  # Convert input to integer
+        user_choice = int(user_choice)  
 
         # Log an Activity
         if user_choice == 1:
@@ -128,7 +128,7 @@ def main():
         # Quit
         elif user_choice == 5:
             print('Thank you for using the Fitness Tracker! Exiting...')
-            break  # Exit loop
+            break 
 
 # Function to calculate total calories burned
 def total_cal(activities):
